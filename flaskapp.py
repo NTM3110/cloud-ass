@@ -12,16 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from flask import Flask, render_template,request
-import boto3
-import config as keys
-from boto3.dynamodb.conditions import Key, Attr
+# import boto3
+# import config as keys
+# from boto3.dynamodb.conditions import Key, Attr
+from controller.UserController import UserController
 # Get the service resource.
 
 
-dynamodb = boto3.resource('dynamodb',
-                    aws_access_key_id=keys.ACCESS_KEY_ID,
-                    aws_secret_access_key=keys.ACCESS_SECRET_KEY,
-                    aws_session_token=keys.AWS_SESSION_TOKEN)
 
 app = Flask(__name__)
 
@@ -42,17 +39,18 @@ def checkRegister():
         email = request.form['email']
         password = request.form['password']
 
-        table = dynamodb.Table('login0')
+        # table = dynamodb.Table('login0')
             
-        table = dynamodb.Table('login0')
+        # table = dynamodb.Table('login0')
             
-        table.put_item(
-            Item={
-                'username': username,
-                'email': email,
-                'password': password
-            }
-        )
+        # table.put_item(
+        #     Item={
+        #         'username': username,
+        #         'email': email,
+        #         'password': password
+        #     }
+        # ) 
+        UserController.post_table()
         msg = "Registration Complete. Please Login to your account !"
         return render_template('login.html',msg = msg)
     return render_template('register.html')
@@ -63,11 +61,11 @@ def checkLogin():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        table = dynamodb.Table('login0')
-        response = table.query(
-                KeyConditionExpression=Key('email').eq(email)
-        )
-        items = response['Items']
+        # table = dynamodb.Table('login0')
+        # response = table.query(
+        #         KeyConditionExpression=Key('email').eq(email)
+        # )
+        items = UserController.check(email)
         name = items[0]['username']
         print(items[0]['username'])
         print(items[0]['password'])

@@ -11,7 +11,10 @@ dynamodb = boto3.resource('dynamodb',
 
 
 class UserController:
-    def create_table():
+    def __init__(self):
+        pass
+
+    def create_table(self):
         table = dynamodb.create_table(
             TableName='users',
             KeySchema=[
@@ -39,7 +42,7 @@ class UserController:
         print(table.item_count)
 
 
-    def post_table (name,email,password):
+    def post_table (self,name,email,password):
         table = dynamodb.Table('login0')
             
         table = dynamodb.Table('login0')
@@ -52,9 +55,9 @@ class UserController:
             }
         )
 
-    @classmethod
+    @staticmethod
     def check(email):
-        table = dynamodb.Table('login')
+        table = dynamodb.Table('login0')
         response = table.query(
                 KeyConditionExpression=Key('email').eq(email)
         )
