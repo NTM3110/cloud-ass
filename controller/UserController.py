@@ -3,6 +3,7 @@ import config as keys
 from boto3.dynamodb.conditions import Key, Attr
 # Get the service resource.
 
+kms = boto3.client('kms', region_name='us-west-1')
 
 dynamodb = boto3.resource('dynamodb',
                     aws_access_key_id=keys.ACCESS_KEY_ID,
