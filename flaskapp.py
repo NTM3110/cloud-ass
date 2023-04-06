@@ -48,18 +48,7 @@ def checkRegister():
         email = request.form['email']
         password = request.form['password']
 
-        # table = dynamodb.Table('login0')
-            
-        # table = dynamodb.Table('login0')
-            
-        # table.put_item(
-        #     Item={
-        #         'username': username,
-        #         'email': email,
-        #         'password': password
-        #     }
-        # ) 
-        UserController.post_table()
+        UserController.post_table(username,email,password)
         msg = "Registration Complete. Please Login to your account !"
         return render_template('login.html',msg = msg)
     return render_template('register.html')
