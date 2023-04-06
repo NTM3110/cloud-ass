@@ -6,12 +6,14 @@ from boto3.dynamodb.conditions import Key, Attr
 client = boto3.client('dynamodb',aws_access_key_id=keys.ACCESS_KEY_ID,
                     aws_secret_access_key=keys.ACCESS_SECRET_KEY,
                     aws_session_token=keys.AWS_SESSION_TOKEN,
+                    region_name='us-east-1'
                 )
 
 dynamodb = boto3.resource('dynamodb',
                     aws_access_key_id=keys.ACCESS_KEY_ID,
                     aws_secret_access_key=keys.ACCESS_SECRET_KEY,
-                    aws_session_token=keys.AWS_SESSION_TOKEN)
+                    aws_session_token=keys.AWS_SESSION_TOKEN, 
+                    region_name='us-east-1')
 
 
 class UserController:
