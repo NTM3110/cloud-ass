@@ -83,7 +83,8 @@ def checkLogin():
             return render_template("main.html",name = name)
         print('Not correct')
     print('Fail')
-    return render_template("login.html")
+    msg = "Email or password is invalid"
+    return render_template("login.html",msg = msg)
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
