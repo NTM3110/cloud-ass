@@ -75,13 +75,14 @@ def checkLogin():
         #         KeyConditionExpression=Key('email').eq(email)
         # )
         items = UserController.check(email)
-        name = items[0]['username']
-        print(items[0]['username'])
-        print(items[0]['password'])
-        if (password == items[0]['password'] and email == items[0]['email']):
-            print('SUCCEED LOGIN')
-            return render_template("main.html",name = name)
-        print('Not correct')
+        if len(items) != 0:
+            name = items[0]['username']
+            print(items[0]['username'])
+            print(items[0]['password'])
+            if (password == items[0]['password'] and email == items[0]['email']):
+                print('SUCCEED LOGIN')
+                return render_template("main.html",name = name)
+            print('Not correct')
     print('Fail')
     msg = "Email or password is invalid"
     return render_template("login.html",msg = msg)
