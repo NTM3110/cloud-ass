@@ -6,15 +6,17 @@ from boto3.dynamodb.conditions import Key, Attr
 client = boto3.client('dynamodb',aws_access_key_id=keys.ACCESS_KEY_ID,
                     aws_secret_access_key=keys.ACCESS_SECRET_KEY,
                     aws_session_token=keys.AWS_SESSION_TOKEN,
+                    region_name='us-east-1'
                 )
 
 dynamodb = boto3.resource('dynamodb',
                     aws_access_key_id=keys.ACCESS_KEY_ID,
                     aws_secret_access_key=keys.ACCESS_SECRET_KEY,
-                    aws_session_token=keys.AWS_SESSION_TOKEN)
+                    aws_session_token=keys.AWS_SESSION_TOKEN,
+                    region_name='us-east-1')
 
 
-class UserController:
+class MusicController:
     def __init__(self):
         pass
 
@@ -49,26 +51,20 @@ class UserController:
 
         # Print out some data about the table.
             print(table.item_count)
-
-
+        return table_name in existing_tables
+    
     @staticmethod
-    def post_table (name,email,password):
-        table = dynamodb.Table('login0')
+    def post_table (title,artist,year,web_url,img_url):
+        table = dynamodb.Table('music')
             
-        table = dynamodb.Table('login0')
+        table = dynamodb.Table('music')
             
         table.put_item(
             Item={
-                'username': name,
-                'email': email,
-                'password': password
+                'title': title,
+                'artist': artist,
+                'year': year,
+                'web_url': web_url,
+                'img_url': img_url
             }
         )
-
-    @staticmethod
-    def check(email):
-        table = dynamodb.Table('login0')
-        response = table.query(
-                KeyConditionExpression=Key('email').eq(email)
-        )
-        return response['Items']

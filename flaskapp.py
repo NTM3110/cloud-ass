@@ -12,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from flask import Flask, render_template,request
+import json
 # import boto3
 # import config as keys
 # from boto3.dynamodb.conditions import Key, Attr
 from controller.UserController import UserController
+from controller.MusicController import MusicController
 # Get the service resource.
 
 
@@ -25,6 +27,13 @@ app = Flask(__name__)
 
 @app.route('/')
 def root():
+    response = MusicController.create_table()
+    if response == False:
+        f = open('a1.json')
+        data = json.load(f)
+        for song in data['songs']:
+            print(song['title'])
+            MusicController.post_table(song['title'],song['artist'],song['year'],song['web_url'],song['img_url'])
     return render_template('login.html')
 
 @app.route('/register')
