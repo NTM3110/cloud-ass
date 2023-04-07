@@ -49,13 +49,18 @@ def query():
     if request.method == 'POST':
         title = request.form['title']
         name = request.form['name']
+        year = request.form['year']
+        artist = request.form['artist']
         print(name)
         items = MusicController.get_item(title)
+        for item in items:
+            if(item['year'] != year or item['artist'] != artist):
+                items.remove(item)
         music_img = S3Controller.show_image("song-image")
         subs = SubController.get_all_item()
         subs_user = []
         for i in subs:
-            if i['username'] == name:
+            if i['username'] == name:               
                 subs_user.append(MusicController.get_item(i['songTitle']))
         return render_template("main.html",name = name,data = items,images = music_img,subs_data = subs_user)
     return render_template('main.html')
