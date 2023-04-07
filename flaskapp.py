@@ -109,8 +109,11 @@ def checkRegister():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
-
-        UserController.post_table(username,email,password)
+        item = UserController.check(email)
+        if item.length > 0:
+            msg = "You have account already. PLEASE LOGIN"
+        else:
+            UserController.post_table(username,email,password)
         msg = "Registration Complete. Please Login to your account !"
         return render_template('login.html',msg = msg)
     return render_template('register.html')
