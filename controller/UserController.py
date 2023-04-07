@@ -74,3 +74,16 @@ class UserController:
                 KeyConditionExpression=Key('email').eq(email)
         )
         return response['Items']
+    
+    def get_all_item():
+        table = dynamodb.Table('login0')
+            
+        table = dynamodb.Table('login0')
+
+        response = table.scan()
+        data = response['Items']
+
+        while 'LastEvaluatedKey' in response:
+            response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            data.extend(response['Items'])
+        return data

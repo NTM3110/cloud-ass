@@ -1,7 +1,7 @@
 import boto3
 import config as keys
 from boto3.dynamodb.conditions import Key, Attr
-# Get the service resource.
+
 
 client = boto3.client('dynamodb',aws_access_key_id=keys.ACCESS_KEY_ID,
                     aws_secret_access_key=keys.ACCESS_SECRET_KEY,
@@ -16,61 +16,54 @@ dynamodb = boto3.resource('dynamodb',
                     region_name='us-east-1')
 
 
-class MusicController:
-    def __init__(self):
-        pass
-
-    @staticmethod
+class SubController:
     def create_table():
-        table_name = 'music'
-        
+        table_name = 'subs'
         existing_tables = client.list_tables()['TableNames']
         if table_name not in existing_tables:
             table = dynamodb.create_table(
-                TableName='music',
+                TableName='subs',
                 KeySchema=[
                     {
-                        'AttributeName': 'title',
+                        'AttributeName': 'username',
                         'KeyType': 'HASH'
+                    },
+                    {
+                        'AttributeName': 'songTitle',
+                        'KeyType': 'RANGE'
                     }
-                    
                 ],
                 AttributeDefinitions=[
                     {
-                    'AttributeName': 'title',
-                    'AttributeType': 'S'
-                    } 
+                        'AttributeName': 'username',
+                        'AttributeType': 'S'
+                    },
+                    {
+                        'AttributeName': 'songTitle',
+                        'AttributeType': 'S'
+                    }
                 ],
                 ProvisionedThroughput={
                     'ReadCapacityUnits': 5,
                     'WriteCapacityUnits': 5
                 }
             )
-            # Wait until the table exists.
-            table.meta.client.get_waiter('table_exists').wait(TableName='music')
+            table.meta.client.get_waiter('table_exists').wait(TableName='subs')
 
-        # Print out some data about the table.
-            print(table.item_count)
-        return table_name in existing_tables
-    
-    @staticmethod
-    def post_table (title,artist,year,web_url,img_url):
-        table = dynamodb.Table('music')
+    def post_table (title,name):
             
-        table = dynamodb.Table('music')
+        table = dynamodb.Table('subs')
             
         table.put_item(
             Item={
-                'title': title,
-                'artist': artist,
-                'year': year,
-                'web_url': web_url,
-                'img_url': img_url
+                'songTitle': title,
+                'username': name
             }
         )
 
     def get_all_item():
-        table = dynamodb.Table('music')
+            
+        table = dynamodb.Table('subs')
 
         response = table.scan()
         data = response['Items']
@@ -80,14 +73,12 @@ class MusicController:
             data.extend(response['Items'])
         return data
     
-    def get_item(title):
-        table = dynamodb.Table('music')
-        response = table.query(
-                KeyConditionExpression=Key('title').eq(title)
-        )
-        data = response['Items']
+    def delete_item(username, songTitle):
+        table = dynamodb.Table('subs')
 
-        while 'LastEvaluatedKey' in response:
-            response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
-            data.extend(response['Items'])
-        return data
+        table.delete_item(
+            Key={
+            "username": username,
+            "songTitle":songTitle
+            }
+        )

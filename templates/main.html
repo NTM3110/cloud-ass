@@ -55,6 +55,13 @@ body {
   background: transparent;
   border: none;
   color: #ffffff;
+  width: 10px;
+}
+#title1{
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  width: 10px;
 }
 img{
   width: 100px;
@@ -70,6 +77,20 @@ img{
 
   <div id = "sub" style="padding-left:16px">
     <h2 >Subscription</h2>
+    <div class="container">
+      <table style="width:100%">
+      <thead>
+        <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Artist</th>
+          <th scope="col">Year</th>
+          <th scope="col">Image</th>
+        </tr>
+      </thead>
+      <tbody id="table_body_sub">
+      </tbody>
+      </table>
+    </div>
   </div>
 
   <div id="query" style="padding-left:16px">
@@ -100,9 +121,41 @@ img{
       </tbody>
       </table>
     </div>
+  </div>
   <script>
+    let name_user = {{name|tojson}}
     let chart_data = {{ data|tojson }}
     let img = {{images|tojson}}
+    let sub_data = {{subs_data|tojson}}
+    let subTableData = ""
+
+    console.log(name_user)
+    if(sub_data.length >0){
+      console.log(sub_data[0][0],sub_data.length)
+
+      // console.log(img["#40.jpg"])
+
+      // for (let i = 0 ; i<chart_data.length;i++){
+      //   console.log(chart_data[i]['title'])
+      // }
+
+      for (let i = 0 ; i< sub_data.length; i++){
+        values = sub_data[i][0]
+        console.log(values.title)
+        filename = values.title+".jpg"
+        console.log(img[filename])
+        subTableData+=`<tr> <td>${values.title}</td> <td>${values.artist}</td> <td>${values.year}</td> <td> <img src="${img[filename]}"/></td>
+          <td> <form action="/delete" method="post">
+                <input type="text" id="title1" name="title1" value="${values.title}" readonly>
+                <input type="submit" value="Delete">
+                <input type="text" id="name" name="name" value="${name_user}" readonly>
+              </form>
+          </td>`
+      }
+    }
+    else subTableData += "<p> NO DATA </p>"
+      document.getElementById("table_body_sub").innerHTML=subTableData;
+
     let tableData=""
     if(chart_data.length >0){
       console.log(chart_data[0].title ,chart_data.length)
@@ -115,10 +168,16 @@ img{
 
       for (let i = 0 ; i< chart_data.length; i++){
         values = chart_data[i]
-        console.log(values.title)
+        // console.log(values.title)
         filename = values.title+".jpg"
-        console.log(img[filename])
-        tableData+=`<tr> <td>${values.title}</td> <td>${values.artist}</td> <td>${values.year}</td> <td> <img src="${img[filename]}"/><td>`
+        // console.log(img[filename])
+        tableData+=`<tr> <td>${values.title}</td> <td>${values.artist}</td> <td>${values.year}</td> <td> <img src="${img[filename]}"/></td>
+          <td> <form action="/sub" method="post">
+                <input type="text" id="title1" name="title1" value="${values.title}" readonly>
+                <input type="text" id="name" name="name" value="${name_user}" readonly>
+                <input type="submit" value="Sub">
+              </form>
+          </td>`
       }
     }
     else tableData += "<p> NO DATA </p>"

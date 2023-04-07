@@ -19,6 +19,7 @@ import json
 from controller.UserController import UserController
 from controller.MusicController import MusicController
 from controller.S3Controller import S3Controller
+from controller.SubController import SubController
 # Get the service resource.
 
 
@@ -33,6 +34,7 @@ def render():
 
 @app.route('/')
 def root():
+    SubController.create_table()
     response = MusicController.create_table()
     if response == False:
         f = open('a1.json')
@@ -50,8 +52,46 @@ def query():
         print(name)
         items = MusicController.get_item(title)
         music_img = S3Controller.show_image("song-image")
-        return render_template('main.html',data = items, name = name,images = music_img)
+        subs = SubController.get_all_item()
+        subs_user = []
+        for i in subs:
+            if i['username'] == name:
+                subs_user.append(MusicController.get_item(i['songTitle']))
+        return render_template("main.html",name = name,data = items,images = music_img,subs_data = subs_user)
     return render_template('main.html')
+
+@app.route('/delete', methods = ['POST'])
+def delete():
+    if request.method == 'POST':
+        title = request.form['title1']
+        name = request.form['name']
+        print("name",name)
+        SubController.delete_item(username=name,songTitle=title)
+        music_data = MusicController.get_all_item()
+        music_img = S3Controller.show_image("song-image")
+        subs = SubController.get_all_item()
+        subs_user = []
+        for i in subs:
+            if i['username'] == name:
+                subs_user.append(MusicController.get_item(i['songTitle']))
+        return render_template("main.html",name = name,data = music_data,images = music_img,subs_data = subs_user)
+    
+@app.route('/sub', methods = ['POST'])
+def sub():
+    if request.method == 'POST':
+        title = request.form['title1']
+        name = request.form['name']
+        print("name",name)
+        SubController.post_table(title=title,name=name)
+        music_data = MusicController.get_all_item()
+        music_img = S3Controller.show_image("song-image")
+        subs = SubController.get_all_item()
+        subs_user = []
+        for i in subs:
+            if i['username'] == name:
+                subs_user.append(MusicController.get_item(i['songTitle']))
+        return render_template("main.html",name = name,data = music_data,images = music_img,subs_data = subs_user)
+                
 
 @app.route('/register')
 def register():
@@ -89,8 +129,12 @@ def checkLogin():
                 print('SUCCEED LOGIN')
                 music_data = MusicController.get_all_item()
                 music_img = S3Controller.show_image("song-image")
-                
-                return render_template("main.html",name = name,data = music_data,images = music_img)
+                subs = SubController.get_all_item()
+                subs_user = []
+                for i in subs:
+                    if i['username'] == name:
+                        subs_user.append(MusicController.get_item(i['songTitle']))
+                return render_template("main.html",name = name,data = music_data,images = music_img,subs_data = subs_user)
             print('Not correct')
     print('Fail')
     msg = "Email or password is invalid"
