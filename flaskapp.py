@@ -18,12 +18,18 @@ import json
 # from boto3.dynamodb.conditions import Key, Attr
 from controller.UserController import UserController
 from controller.MusicController import MusicController
+from controller.S3Controller import S3Controller
 # Get the service resource.
 
 
 
 app = Flask(__name__)
-
+def render():
+    title = request.form['title']
+    print(title)
+    items = MusicController.get_item(title)
+    print(items[0])
+    render_template('main.html',data = items)
 
 @app.route('/')
 def root():
@@ -35,6 +41,17 @@ def root():
             print(song['title'])
             MusicController.post_table(song['title'],song['artist'],song['year'],song['web_url'],song['img_url'])
     return render_template('login.html')
+
+@app.route('/query', methods = ['POST'])
+def query():
+    if request.method == 'POST':
+        title = request.form['title']
+        name = request.form['name']
+        print(name)
+        items = MusicController.get_item(title)
+        music_img = S3Controller.show_image("song-image")
+        return render_template('main.html',data = items, name = name,images = music_img)
+    return render_template('main.html')
 
 @app.route('/register')
 def register():
@@ -70,7 +87,10 @@ def checkLogin():
             print(items[0]['password'])
             if (password == items[0]['password'] and email == items[0]['email']):
                 print('SUCCEED LOGIN')
-                return render_template("main.html",name = name)
+                music_data = MusicController.get_all_item()
+                music_img = S3Controller.show_image("song-image")
+                
+                return render_template("main.html",name = name,data = music_data,images = music_img)
             print('Not correct')
     print('Fail')
     msg = "Email or password is invalid"

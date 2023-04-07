@@ -68,3 +68,28 @@ class MusicController:
                 'img_url': img_url
             }
         )
+
+    def get_all_item():
+        table = dynamodb.Table('music')
+            
+        table = dynamodb.Table('music')
+
+        response = table.scan()
+        data = response['Items']
+
+        while 'LastEvaluatedKey' in response:
+            response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            data.extend(response['Items'])
+        return data
+    
+    def get_item(title):
+        table = dynamodb.Table('music')
+        response = table.query(
+                KeyConditionExpression=Key('title').eq(title)
+        )
+        data = response['Items']
+
+        while 'LastEvaluatedKey' in response:
+            response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            data.extend(response['Items'])
+        return data

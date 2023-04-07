@@ -20,6 +20,9 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+table, th, td {
+  border:1px solid black;
+}
 body {
   margin-left: 10%;
   margin-right: 10%;
@@ -48,29 +51,74 @@ body {
   left: 70%;
   position: absolute;
 }
-#sub{
-  height: 100vh;
+#name{
+  background: transparent;
+  border: none;
+  color: #ffffff;
 }
-#query{
-  height: 100vh;
+img{
+  width: 100px;
 }
 </style>
 </head>
 <body>
+  <div class="topnav">
+    <a href="#sub">Subscription</a>
+    <a href="#query">Query</a>
+    <p>Hello, {{name}} &nbsp; </p>
+  </div>
 
-<div class="topnav">
-  <a href="#sub">Subscription</a>
-  <a href="#query">Query</a>
-  <p>Hello, {{name}} &nbsp; </p>
-</div>
+  <div id = "sub" style="padding-left:16px">
+    <h2 >Subscription</h2>
+  </div>
 
-<div id = "sub" style="padding-left:16px">
-  <h2 >Subscription</h2>
-  <p>Some content..</p>
-</div>
-<div id="query" style="padding-left:16px">
-  <h2>Query</h2>
-  <p>Some content..</p>
-</div>
+  <div id="query" style="padding-left:16px">
+    <h2>Query</h2>
+    <form action="/query" method="post" style="margin-bottom: 2vh;">
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" placeholder="Title" required>
+      <label for="artist">Artist</label>
+      <input type="text" id="artist" name="artist" placeholder="Artist">
+      <label for="year">Year</label>
+      <input type="text" id="year" name="year" placeholder="Year">
+      <input type="submit" value="Query">
+      <input type="text" id="name" name="name" value={{name}} readonly>
+      
+    </form>
+
+    <div class="container">
+      <table style="width:100%">
+      <thead>
+        <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Artist</th>
+          <th scope="col">Year</th>
+        </tr>
+      </thead>
+      <tbody id="table_body">
+      </tbody>
+      </table>
+    </div>
+  <script>
+    let chart_data = {{ data|tojson }}
+    let img = {{images|tojson}}
+    console.log(chart_data[0].title ,chart_data.length)
+
+    // console.log(img["#40.jpg"])
+
+    // for (let i = 0 ; i<chart_data.length;i++){
+    //   console.log(chart_data[i]['title'])
+    // }
+    let tableData=""
+
+    for (let i = 0 ; i< chart_data.length; i++){
+      values = chart_data[i]
+      console.log(values.title)
+      filename = values.title+".jpg"
+      console.log(img[filename])
+      tableData+=`<tr> <td>${values.title}</td> <td>${values.artist}</td> <td>${values.year}</td> <td> <img src="${img[filename]}"/><td>`
+    }
+    document.getElementById("table_body").innerHTML=tableData;
+  </script>
 </body>
 </html>
