@@ -15,19 +15,10 @@ s3_client = boto3.client('s3', aws_access_key_id=keys.ACCESS_KEY_ID,
 class S3Controller:
 
     @staticmethod
-    def create_bucket(bucket_name, region=None):
+    def create_bucket(bucket_name):
         try:
-            if region is None:
-                s3_client.create_bucket(Bucket=bucket_name)
-            else:
-                s3_client = boto3.client('s3', aws_access_key_id=keys.ACCESS_KEY_ID,
-                    aws_secret_access_key=keys.ACCESS_SECRET_KEY,
-                    aws_session_token=keys.AWS_SESSION_TOKEN,
-                    region_name=region
-                )
-                location = {'LocationConstraint': region}
-                s3_client.create_bucket(Bucket=bucket_name,
-                                        CreateBucketConfiguration=location)
+            location = {'LocationConstraint': 'us-east-1'}
+            s3_client.create_bucket(Bucket=bucket_name)
 
         except ClientError as e:
             logging.error(e)
@@ -41,10 +32,11 @@ class S3Controller:
             f = urllib.request.urlopen(link)
             myfile = f.read()
             response = s3_client.put_object(
-                Bucket = "song-image",
+                Bucket = bucket,
                 Body = myfile,
                 Key=object_name+".jpg",
             )
+            print(object_name)
         except ClientError as e:
             logging.error(e)
             return False
