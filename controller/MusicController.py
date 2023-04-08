@@ -42,8 +42,8 @@ class MusicController:
                     } 
                 ],
                 ProvisionedThroughput={
-                    'ReadCapacityUnits': 5,
-                    'WriteCapacityUnits': 5
+                    'ReadCapacityUnits': 200,
+                    'WriteCapacityUnits': 200
                 }
             )
             # Wait until the table exists.
@@ -58,7 +58,7 @@ class MusicController:
         table = dynamodb.Table('music')
             
         table = dynamodb.Table('music')
-            
+        
         table.put_item(
             Item={
                 'title': title,
